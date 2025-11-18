@@ -7,7 +7,6 @@ public class LoginPage extends BasePage{
     private By usernameField = By.id("user-name");
     private By passwordField = By.id("password");
     private By loginButton = By.id("login-button");
-    private By errorMessage = By.cssSelector("[data-test='error']");
 
     public LoginPage() {
         super();
@@ -26,12 +25,5 @@ public class LoginPage extends BasePage{
         return new ProductsPage();
     }
 
-    public boolean isLoginButtonVisible() {
-        try {
-            return waitForVisibility(loginButton).isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
 }

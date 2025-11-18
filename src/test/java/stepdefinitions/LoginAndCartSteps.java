@@ -3,6 +3,7 @@ package stepdefinitions;
 import io.cucumber.java.en.*;
 import org.testng.Assert;
 import pages.CartPage;
+import pages.CheckoutPage;
 import pages.LoginPage;
 import pages.ProductsPage;
 import utils.ConfigReader;
@@ -12,6 +13,7 @@ public class LoginAndCartSteps {
     private LoginPage loginPage;
     private ProductsPage productsPage;
     private CartPage cartPage;
+    private CheckoutPage checkoutPage;
 
     @Given("the user is on the login page")
     public void theUserIsOnTheLoginPage() {
@@ -35,42 +37,45 @@ public class LoginAndCartSteps {
     @Given("the user has added a product to the cart")
     public void theUserHasAddedProductToTheCart() {
         // For simplicity, we have only Sauce Labs Onesie implemented in ProductsPage
-        productsPage.addSauceLabsOnesieToCart();
+        productsPage.addFirstProductToCart();
     }
 
     @And("the user is on the cart page")
     public void theUserIsOnTheCartPage() {
+        cartPage = new CartPage();
         productsPage.clickCartBadge();
         String currentUrl = loginPage.getCurrentUrl();
+
         Assert.assertTrue(currentUrl.contains("cart.html"),
                 "Expected to be on cart page");
-        cartPage = new CartPage();
         Assert.assertTrue(cartPage.getCartHeaderText().contains("Your Cart"));
-        Assert.assertTrue(cartPage.getInventoryItemName().contains("Sauce Labs Onesie"));
-        Assert.assertEquals(cartPage.getItemQuantity(), "1");
+        boolean productFound = !cartPage.getCartItems().isEmpty();
+        Assert.assertTrue(productFound, "No products found in the cart");
     }
 
     @When("the user proceeds to checkout")
     public void theUserProceedsToCheckout() {
-
+        cartPage.clickCheckoutButton();
+        checkoutPage = new CheckoutPage();
 
     }
 
     @And("the user submits the checkout form leaving required fields blank")
     public void theUserSubmitsTheCheckoutFormLeavingRequiredFieldsBlank() {
-
+        checkoutPage.fillCheckoutForm("","","");
+        checkoutPage.clickContinueButton();
 
     }
 
     @Then("the user remains on the checkout information page")
     public void theUserRemainsOnTheCheckoutInformationPage() {
-
+        Assert.assertTrue(checkoutPage.isStepOneDisplayed(), "Checkout progressed despite missing mandatory information");
 
     }
 
     @And("the system displays a clear error message indicating which required fields are missing")
     public void theSystemDisplaysAClearErrorMessageIndicatingWhichRequiredFieldsAreMissing() {
-
+        Assert.assertTrue(checkoutPage.getErrorMessage().contains("Error"), "Expect error message not displayed");
 
     }
 }

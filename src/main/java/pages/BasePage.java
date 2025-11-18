@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.DriverManager;
 
 import java.time.Duration;
+import java.util.List;
 
 public class BasePage {
 
@@ -27,6 +28,10 @@ public class BasePage {
 
     protected WebElement waitForVisibility(By locator) {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
+    protected List<WebElement> waitForVisibilityAll(By locator) {
+        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
     }
 
     protected WebElement waitForClickability(By locator) {
