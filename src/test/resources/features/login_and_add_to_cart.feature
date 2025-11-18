@@ -1,20 +1,15 @@
 Feature: Login and Product Search Automation
 
-  Scenario: Login with valid credentials
+  Background:
     Given the user is on the login page
-    When the user logs in with valid credentials
-    Then the user should be on the products page
+    And the user logs in with valid credentials
 
-  @requiresLogin
-  Scenario: Add an item to the cart
-    Given the user is logged in
-    When the user adds "Sauce Labs Onesie" to the cart
-    Then the cart should contain 1 item
+  Scenario: Checkout Step One Error Validation
+    Given the user has added a product to the cart
+    And the user is on the cart page
+    When the user proceeds to checkout
+    And the user submits the checkout form leaving required fields blank
+    Then the user remains on the checkout information page
+    And the system displays a clear error message indicating which required fields are missing
 
-  @requiresLogin
-  Scenario: Logout from the application
-    Given the user is logged in
-    When the user clicks on the menu button
-    And the user selects Logout
-    Then the user should be redirected to the login page
 
