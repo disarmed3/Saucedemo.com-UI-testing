@@ -1,7 +1,6 @@
 package stepdefinitions;
 
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.*;
 import models.ProductData;
 import org.testng.Assert;
@@ -42,7 +41,6 @@ public class LoginAndCartSteps {
 
     @Given("the user has added a product to the cart")
     public void theUserHasAddedProductToTheCart() {
-        // For simplicity, we have only Sauce Labs Onesie implemented in ProductsPage
         productsPage.addFirstProductToCart();
     }
 
