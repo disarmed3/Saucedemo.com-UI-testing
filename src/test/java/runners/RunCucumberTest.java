@@ -10,7 +10,8 @@ import org.testng.annotations.DataProvider;
         plugin = {
                 "pretty",
                 "html:target/cucumber-report.html",
-                "json:target/cucumber.json"
+                "json:target/cucumber.json",
+                "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
         },
         monochrome = true
 )

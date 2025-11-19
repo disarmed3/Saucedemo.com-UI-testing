@@ -10,12 +10,20 @@ public class CheckoutPage extends BasePage {
     private By continueButton = By.id("continue");
     private By errorMessage = By.cssSelector("[data-test='error']");
 
-    public CheckoutPage() { super(); }
+    public CheckoutPage() {
+        super();
+    }
+
+    public void clearForm() {
+        waitForVisibility(firstNameField).clear();
+        waitForVisibility(lastNameField).clear();
+        waitForVisibility(postalCodeField).clear();
+    }
 
     public void fillCheckoutForm(String firstName, String lastName, String postalCode) {
-        type(firstNameField, firstName);
-        type(lastNameField, lastName);
-        type(postalCodeField, postalCode);
+        if (firstName != null) type(firstNameField, firstName);
+        if (lastName != null ) type(lastNameField, lastName);
+        if (postalCode != null) type(postalCodeField, postalCode);
     }
 
     public void clickContinueButton() {
@@ -28,5 +36,9 @@ public class CheckoutPage extends BasePage {
 
     public String getErrorMessage() {
         return waitForVisibility(errorMessage).getText();
-    }}
+    }
+    public void returnToCheckoutPage() {
+        driver.navigate().back();
+    }
+}
 

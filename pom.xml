@@ -57,6 +57,12 @@
             <version>6.3.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-cucumber7-jvm</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

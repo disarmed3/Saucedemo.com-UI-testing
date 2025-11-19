@@ -1,12 +1,16 @@
 package stepdefinitions;
 
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.*;
+import models.ProductData;
 import org.testng.Assert;
-import pages.CartPage;
-import pages.CheckoutPage;
-import pages.LoginPage;
-import pages.ProductsPage;
+import org.testng.asserts.SoftAssert;
+import pages.*;
 import utils.ConfigReader;
+
+import java.util.List;
+import java.util.Map;
 
 public class LoginAndCartSteps {
 
@@ -14,6 +18,8 @@ public class LoginAndCartSteps {
     private ProductsPage productsPage;
     private CartPage cartPage;
     private CheckoutPage checkoutPage;
+    private List<ProductData> productsInCart;
+    CheckoutOverviewPage overviewPage = new CheckoutOverviewPage();
 
     @Given("the user is on the login page")
     public void theUserIsOnTheLoginPage() {
@@ -45,6 +51,7 @@ public class LoginAndCartSteps {
         cartPage = new CartPage();
         productsPage.clickCartBadge();
         String currentUrl = loginPage.getCurrentUrl();
+        productsInCart = cartPage.getCartProducts();
 
         Assert.assertTrue(currentUrl.contains("cart.html"),
                 "Expected to be on cart page");
@@ -60,22 +67,60 @@ public class LoginAndCartSteps {
 
     }
 
-    @And("the user submits the checkout form leaving required fields blank")
-    public void theUserSubmitsTheCheckoutFormLeavingRequiredFieldsBlank() {
-        checkoutPage.fillCheckoutForm("","","");
+    @Then("the user verifies the following mandatory field errors:")
+    public void theUserVerifiesTheFollowingMandatoryFieldErrors(DataTable dataTable) {
+        SoftAssert softAssert = new SoftAssert();
+        List<Map<String, String>> scenarios = dataTable.asMaps(String.class, String.class);
+
+        for (Map<String, String> row : scenarios) {
+            String fName = row.get("FirstName");
+            String lName = row.get("LastName");
+            String zip = row.get("Zip");
+            String expectedError = row.get("ErrorMessage");
+
+            checkoutPage.clearForm();
+            checkoutPage.fillCheckoutForm(fName, lName, zip);
+            checkoutPage.clickContinueButton();
+
+            if (!checkoutPage.isStepOneDisplayed()) {
+                softAssert.fail("FAIL: we proceeded to Checkout: Overview. Fields Used:"+fName+","+lName+","+zip);
+                checkoutPage.returnToCheckoutPage();
+            } else {
+                String actualError = checkoutPage.getErrorMessage();
+                softAssert.assertEquals(actualError, expectedError,
+                        "Error mismatch for inputs [" + fName + ", " + lName + ", " + zip + "]");
+            }
+
+        }
+        softAssert.assertAll();
+
+    }
+
+
+    @Given("the user has added two random products to the cart")
+    public void theUserHasAddedTwoRandomProductsToTheCart() {
+        productsPage.addRandomProducts(2);
+    }
+
+    @And("fills the checkout form with valid data")
+    public void fillsTheCheckoutFormWithValidData() {
+        checkoutPage.clearForm();
+        checkoutPage.fillCheckoutForm("John", "Doe", "12345");
         checkoutPage.clickContinueButton();
-
     }
 
-    @Then("the user remains on the checkout information page")
-    public void theUserRemainsOnTheCheckoutInformationPage() {
-        Assert.assertTrue(checkoutPage.isStepOneDisplayed(), "Checkout progressed despite missing mandatory information");
-
+    @Then("the user proceeds to checkout step two page")
+    public void theUserProceedsToCheckoutStepTwoPage() {
+        Assert.assertTrue(loginPage.getCurrentUrl().contains("checkout-step-two"),
+                "User did not reach Checkout Step Two page");
     }
 
-    @And("the system displays a clear error message indicating which required fields are missing")
-    public void theSystemDisplaysAClearErrorMessageIndicatingWhichRequiredFieldsAreMissing() {
-        Assert.assertTrue(checkoutPage.getErrorMessage().contains("Error"), "Expect error message not displayed");
-
+    @And("the checkout step two page should display the correct products and prices")
+    public void theCheckoutStepTwoPageShouldDisplayTheCorrectProductsAndPrices() {
+        List<ProductData> productsInOverview = overviewPage.getOverviewProducts();
+        Assert.assertEquals(productsInOverview.size(), productsInCart.size(), "Number of products in Overview does not match Cart!");
+        Assert.assertTrue(productsInOverview.containsAll(productsInCart),
+                "Product mismatch! \nExpected (Cart): " + productsInCart +
+                        "\nActual (Overview): " + productsInOverview);
     }
 }

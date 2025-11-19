@@ -1,6 +1,10 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import java.util.Collections;
+import java.util.List;
 
 public class ProductsPage extends BasePage{
 
@@ -26,4 +30,10 @@ public class ProductsPage extends BasePage{
         return waitForVisibility(productsHeader).getText();
     }
 
+    public void addRandomProducts(int quantity) {
+        List<WebElement> allButtons = waitForVisibilityAll(By.cssSelector(".btn_inventory"));
+        Collections.shuffle(allButtons);
+        int clicksToPerform = Math.min(quantity, allButtons.size());
+        for (int i=0; i< clicksToPerform; i++) allButtons.get(i).click();
+    }
 }
