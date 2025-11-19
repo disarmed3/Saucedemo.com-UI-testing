@@ -1,5 +1,3 @@
-Here is the complete, updated content for your `README.md`. You can copy and paste this directly into your file.
-
 ````markdown
 # Saucedemo.com UI Automation Framework
 
