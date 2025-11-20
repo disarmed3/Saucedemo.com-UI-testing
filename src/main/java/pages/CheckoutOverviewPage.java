@@ -13,6 +13,7 @@ public class CheckoutOverviewPage extends BasePage{
     private By cartItemPrice = By.className("inventory_item_price");
     private By cartItemsContainer = By.className("cart_item");
     private By finishButton = By.id("finish");
+    private By CheckoutOverviewHeader = By.cssSelector("[data-test='title']");
 
     public List<ProductData> getOverviewProducts() {
         List<ProductData> products = new ArrayList<>();
@@ -27,5 +28,9 @@ public class CheckoutOverviewPage extends BasePage{
     }
     public void clickFinish() {
         click(finishButton);
+    }
+
+    public String getCheckoutOverviewText() {
+        return waitForVisibility(CheckoutOverviewHeader).getText();
     }
 }

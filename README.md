@@ -128,7 +128,7 @@ This project uses **Allure** for interactive HTML reports containing:
 
 ## ⚙️ Configuration
 
-- **Browser:** Configured in `config.properties` (Default: Chrome).
+- **Browser:** Firefox 
 - **URL:** https://www.saucedemo.com
 - **Artifacts:** Videos and Allure results are stored in `target/` and excluded from Git via `.gitignore`.
 

@@ -26,14 +26,6 @@ public class CartPage extends BasePage{
         return waitForVisibilityAll(cartItems);
     }
 
-    public String getProductName(WebElement cartItem) {
-        return waitForVisibility(inventoryItemName).getText();
-    }
-
-    public String getProductQuantity(WebElement cartItem) {
-        return waitForVisibility(cartQuantity).getText();
-    }
-
     public void clickCheckoutButton() {
         click(checkoutButton);
     }

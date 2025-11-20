@@ -33,10 +33,10 @@ public class LoginAndCartSteps {
         loginPage.enterUsername(username);
         loginPage.enterPassword(password);
         productsPage = loginPage.clickLogin();
-        String currentUrl = productsPage.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("inventory.html"),
-                "Expected to be on products page");
         Assert.assertTrue(productsPage.getProductsHeaderText().contains("Products"));
+        Assert.assertTrue(productsPage.getCurrentUrl().contains("inventory.html"),
+                "Expected to be on products page");
+
     }
 
     @Given("the user has added a product to the cart")
@@ -48,14 +48,13 @@ public class LoginAndCartSteps {
     public void theUserIsOnTheCartPage() {
         cartPage = new CartPage();
         productsPage.clickCartBadge();
-        String currentUrl = loginPage.getCurrentUrl();
         productsInCart = cartPage.getCartProducts();
 
-        Assert.assertTrue(currentUrl.contains("cart.html"),
-                "Expected to be on cart page");
         Assert.assertTrue(cartPage.getCartHeaderText().contains("Your Cart"));
         boolean productFound = !cartPage.getCartItems().isEmpty();
         Assert.assertTrue(productFound, "No products found in the cart");
+        Assert.assertTrue(loginPage.getCurrentUrl().contains("cart.html"),
+                "Expected to be on cart page");
     }
 
     @When("the user proceeds to checkout")
@@ -95,9 +94,9 @@ public class LoginAndCartSteps {
     }
 
 
-    @Given("the user has added two random products to the cart")
-    public void theUserHasAddedTwoRandomProductsToTheCart() {
-        productsPage.addRandomProducts(2);
+    @Given("the user has added {int} random products to the cart")
+    public void theUserHasAddedTwoRandomProductsToTheCart(int quantity) {
+        productsPage.addRandomProducts(quantity);
     }
 
     @And("fills the checkout form with valid data")
@@ -109,8 +108,10 @@ public class LoginAndCartSteps {
 
     @Then("the user proceeds to checkout step two page")
     public void theUserProceedsToCheckoutStepTwoPage() {
-        Assert.assertTrue(loginPage.getCurrentUrl().contains("checkout-step-two"),
+        Assert.assertTrue(overviewPage.getCheckoutOverviewText().contains("Overview"));
+        Assert.assertTrue(loginPage.getCurrentUrl().contains("checkout-step-two.html"),
                 "User did not reach Checkout Step Two page");
+
     }
 
     @And("the checkout step two page should display the correct products and prices")

@@ -21,7 +21,7 @@ Feature: Checkout Step One and Two Information Validation
 
   @test-two
   Scenario: Checkout Step Two Page Validation
-    Given the user has added two random products to the cart
+    Given the user has added 2 random products to the cart
     And the user is on the cart page
     When the user proceeds to checkout
     And fills the checkout form with valid data
