@@ -56,6 +56,11 @@ public class VideoManager {
     }
 
     public File stopRecording() {
+
+        if (this.screenRecorder == null) {
+            return null;
+        }
+
         try {
             this.screenRecorder.stop();
 

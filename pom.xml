@@ -17,32 +17,30 @@
         <selenium.version>4.18.1</selenium.version>
         <allure.version>2.29.0</allure.version>
         <testng.version>7.9.0</testng.version>
+
+        <test.threads>4</test.threads>
+        <video.mode>NONE</video.mode>
     </properties>
 
     <dependencies>
-
-        <!-- Selenium -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>${selenium.version}</version>
         </dependency>
 
-        <!-- Cucumber Java -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
             <version>${cucumber.version}</version>
         </dependency>
 
-        <!-- Cucumber TestNG -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-testng</artifactId>
             <version>${cucumber.version}</version>
         </dependency>
 
-        <!-- TestNG -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -50,12 +48,10 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>6.3.3</version>
-        </dependency>
+            <version>5.7.0</version> </dependency>
 
         <dependency>
             <groupId>io.qameta.allure</groupId>
@@ -69,30 +65,78 @@
             <version>0.7.7.0</version>
         </dependency>
 
+
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>parallel-mode</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!sequential</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.2.5</version>
+                        <configuration>
+                            <includes>
+                                <include>**/RunParallelCucumberTest.java</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <video.mode>${video.mode}</video.mode>
+                            </systemPropertyVariables>
+                            <properties>
+                                <property>
+                                    <name>dataproviderthreadcount</name>
+                                    <value>${test.threads}</value>
+                                </property>
+                            </properties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>sequential-mode</id>
+            <activation>
+                <property>
+                    <name>sequential</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.2.5</version>
+                        <configuration>
+                            <includes>
+                                <include>**/RunCucumberTest.java</include>
+                            </includes>
+                            <threadCount>1</threadCount>
+                            <systemPropertyVariables>
+                                <video.mode>${video.mode}</video.mode>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
-
-            <!-- Maven Surefire: Runs TestNG tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-                <configuration>
-                    <includes>
-                        <include>**/*CucumberTest.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-
-            <!-- Allure Maven Plugin -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
                 <version>2.12.0</version>
             </plugin>
-
         </plugins>
     </build>
 

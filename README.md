@@ -1,11 +1,8 @@
-Here is the complete, updated content for your `README.md`. You can copy and paste this directly into your file.
-
-````markdown
 # Saucedemo.com UI Automation Framework
 
 This project contains **robust UI automation tests** for the e-commerce demo site **https://www.saucedemo.com**.
 
-It goes beyond basic script execution by implementing **Enterprise-Grade Best Practices**, including Self-Healing Tests, Video Recording, Allure Reporting, and Data Consistency Checks.
+It goes beyond basic script execution by implementing **Enterprise-Grade Best Practices**, including Self-Healing Tests, Configurable Video Recording, Allure Reporting, and Data Consistency Checks.
 
 The framework is built using:
 -   **Java 17+**
@@ -16,7 +13,7 @@ The framework is built using:
 -   **Monte Screen Recorder** (Video Evidence)
 -   **WebDriverManager**
 
-The tests follow a strict **Page Object Model (POM)** with **Fluent Interface** design patterns.
+The tests follow a strict **Page Object Model (POM)**.
 
 ---
 
@@ -40,8 +37,8 @@ src
 │       │
 │       └── utils
 │           ├── ConfigReader.java
-│           ├── DriverManager.java
-│           └── VideoManager.java  
+│           └── DriverManager.java
+│           
 │
 └── test
     ├── java
@@ -49,10 +46,11 @@ src
     │   │   └── Hooks.java         
     │   ├── runners
     │   │   └── RunCucumberTest.java
+    │   │   └── RunParallelCucumberTest.java
+    |   ├── utils
+    |   |   └── VideoManager.java
     │   └── stepdefinitions        
-    │       ├── LoginSteps.java
-    │       ├── CartSteps.java
-    │       └── CheckoutSteps.java
+    │       └── LoginAndCartSteps.java
     │
     └── resources
         ├── features
@@ -74,15 +72,15 @@ Instead of restarting the browser for every negative test case, the framework na
 
 ### **2. Video Recording Strategy**
 
-- **On Failure:** The test execution video is attached to the Allure Report for debugging.
-- **On Success:** The video is automatically deleted to save disk space.
-- **Tool:** Monte Media Library.
+The framework uses **Monte Media Library** for video recording. To optimize performance and disk usage, video behavior is fully configurable via the `video.mode` property.
+
+- **`NONE` (Default):** No video recording. Best for fast parallel execution.
+- **`FAILED_ONLY`:** Records the test execution but automatically deletes the video if the test passes. The video is kept and attached to the Allure report only if the test fails. Recommended only in sequential execution.
+- **`ALWAYS`:** Records and keeps video evidence for every test, regardless of the result. Recommended only in sequential execution.
 
 ### **3. Strict Data Consistency (POJOs)**
 
 Uses a custom `ProductData` object to "snapshot" the cart state (Name & Price) and compares it against the Checkout Overview page using an overridden `.equals()` method. This ensures 100% data integrity between screens.
-
-
 
 -----
 
@@ -116,14 +114,11 @@ This project uses **Allure** for interactive HTML reports containing:
 
 - Step-by-step execution logs.
 - **Screenshots** on failure.
-- **Video recordings** on failure.
+- **Video recordings** (based on configuration).
 
 ### **How to view the report:**
 
-1.  Run the tests:
-    ```bash
-    mvn clean test
-    ```
+1.  Run the tests (see commands below).
 2.  Generate and serve the report:
     ```bash
     mvn allure:serve
@@ -141,14 +136,14 @@ This project uses **Allure** for interactive HTML reports containing:
 
 ## ▶️ How to Run
 
-**Run via Maven:**
+The framework supports **Parallel Execution** (for speed) and **Sequential Execution** (for video evidence/debugging).
 
-```bash
-mvn clean test
-```
-
-**Run via IntelliJ:**
-Right-click `RunCucumberTest.java` and select **Run**.
+| Mode | Description | Command (PowerShell) |
+| :--- | :--- | :--- |
+| **Speed Run** (Default) | **Parallel** (4 threads), No Video. Best for CI/CD and daily regression. | `mvn clean test` |
+| **Smart Debug** | **Sequential**, Video on Fail. Best for fixing flaky tests. | `mvn clean test "-Dsequential" "-Dvideo.mode=FAILED_ONLY"` |
+| **Evidence Run** | **Sequential**, Video Always. Best for demos or audits. | `mvn clean test "-Dsequential" "-Dvideo.mode=ALWAYS"` |
+| **Safe Mode** | **Sequential**, No Video. Best for troubleshooting race conditions. | `mvn clean test "-Dsequential"` |
 
 ```
 ```
