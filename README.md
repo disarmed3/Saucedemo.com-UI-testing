@@ -2,7 +2,7 @@
 
 This project contains **robust UI automation tests** for the e-commerce demo site **https://www.saucedemo.com**.
 
-It goes beyond basic script execution by implementing **Enterprise-Grade Best Practices**, including Self-Healing Tests, Configurable Video Recording, Allure Reporting, and Data Consistency Checks.
+It goes beyond basic script execution by implementing, including Self-Healing Tests, Configurable Video Recording, Allure Reporting, and Data Consistency Checks.
 
 The framework is built using:
 -   **Java 17+**
